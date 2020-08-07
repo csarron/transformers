@@ -9,6 +9,8 @@ from experiment_impact_tracker.utils import gather_additional_info
 from experiment_impact_tracker.utils import load_initial_info
 from pathlib import Path
 
+from natsort import natsorted
+
 
 def one_energy(log_dir):
     sys_data = load_initial_info(log_dir)
@@ -18,10 +20,13 @@ def one_energy(log_dir):
 
 def main(args):
     log_parent_path = Path(args.log_parent_dir)
-    energy = [one_energy(x) for x in log_parent_path.iterdir() if x.is_dir()]
+    energy = {x.name: one_energy(x) for x in log_parent_path.iterdir()
+              if x.is_dir()}
+    for x, val in natsorted(energy.items()):
+        print(f"{x[1:]}, {val * 3.6e6} ")
     print(f"found {len(energy)} logs")
-    avg = np.mean(energy)
-    std = np.std(energy)
+    avg = np.mean(list(energy.values()))
+    std = np.std(list(energy.values()))
     print(f"{log_parent_path} energy")
     print(f"avg (kwh), std (kwh), avg (J), std (J), std ratio (%)")
     print(f"{avg:.5f}, {std:.5f}, {avg * 3.6e6:.1f}, "
