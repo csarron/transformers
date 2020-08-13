@@ -55,7 +55,7 @@ This model is case-sensitive: it makes a difference between english and English.
 
   wget -O data/dev-v1.1.json  https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json
 
-  python run_energy_squad.py \
+  python run_squad.py \
     --model_type roberta \
     --model_name_or_path roberta-base \
     --do_train \
