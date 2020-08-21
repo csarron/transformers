@@ -95,13 +95,13 @@ class WattsUp(object):
                     n_secs = self.n_seconds
                     total_str = ' / {} s'.format(n_secs) if n_secs else ''
                     screen.addstr(4, 4, 'Time:     %d s%s' % (n, total_str))
-                    screen.addstr(5, 4, 'Power:   %3.1f W' % power)
-                    screen.addstr(6, 4, 'Voltage: %5.1f V' % voltage)
+                    screen.addstr(5, 4, 'Power:   %6.3f W' % power)
+                    screen.addstr(6, 4, 'Voltage: %6.1f V' % voltage)
                     if current < 1000:
                         screen.addstr(
                             7, 4, 'Current: %d mA' % int(current * 1000))
                     else:
-                        screen.addstr(7, 4, 'Current: %3.3f A' % current)
+                        screen.addstr(7, 4, 'Current: %6.3f A' % current)
                     screen.addstr(9, 4, 'Press "q" to quit ')
                     screen.refresh()
                     c = screen.getch()
@@ -112,7 +112,7 @@ class WattsUp(object):
                         timestamp = '{}-{}-{}-{}-{}-{}'.format(
                             now.year, now.month, now.day,
                             now.hour, now.minute, now.second)
-                        o.write('%s %d %3.1f %3.1f %5.3f\n' % (
+                        o.write('%s %d %6.3f %6.3f %6.3f\n' % (
                             timestamp, n, power, voltage, current))
                     n += self.interval
                     if n_secs and n >= n_secs:
