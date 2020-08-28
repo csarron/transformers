@@ -30,15 +30,19 @@ Time-stamp: <Fri Sep  2 17:11:38 EDT 2011>
 
 """
 
-import sys, os
-import numpy as np
+import os
+import sys
+
 import matplotlib
+import numpy as np
+
 matplotlib.use('Qt5Agg')
-from matplotlib import dates, pyplot
+from matplotlib import pyplot
+
 
 def main():
     if len(sys.argv) < 2:
-        logfilename = 'log.out'         # use default filename
+        logfilename = 'log.out'  # use default filename
         print('No input filename specified: using %s' % logfilename)
     else:
         logfilename = sys.argv[1]
@@ -49,22 +53,23 @@ def main():
         print('Reading file %s' % logfilename)
     if len(sys.argv) < 3:
         pngfilename = None
-        print('No output filename specified: will not write output file for plot')
+        print(
+            'No output filename specified: will not write output file for plot')
     else:
         pngfilename = sys.argv[2]
         print('Plot will be saved as %s' % pngfilename)
-    data = np.genfromtxt(logfilename, usecols = (2, 3, 4, 5))
-    t = data[:,0]
-    w = data[:,1]
-    i = data[:,3]
+    data = np.genfromtxt(logfilename, usecols=(2, 3, 4, 5))
+    t = data[:, 0]
+    w = data[:, 1]
+    i = data[:, 3]
     pyplot.figure(0)
-    pyplot.plot(t/60,w)
+    pyplot.plot(t, w)
     ax = pyplot.gca()
-    ax.set_xlabel('Time (minutes)')
+    ax.set_xlabel('Time (second)')
     ax.set_ylabel('Power (W)')
     ax2 = ax.twinx()
-    clim = pyplot.get(ax,'ylim')
-    ax2.set_ylim(clim[0]*1000/120,clim[1]*1000/120)
+    clim = pyplot.get(ax, 'ylim')
+    ax2.set_ylim(clim[0] * 1000 / 120, clim[1] * 1000 / 120)
     ax2.set_ylabel('Current (mA)')
     # generate a PNG file
     if pngfilename:
@@ -74,21 +79,22 @@ def main():
 
     pyplot.figure(1)
     # cumulative plot
-    pyplot.plot(t/60,np.cumsum(w)/1000)
+    pyplot.plot(t / 60, np.cumsum(w) / 1000)
     ax = pyplot.gca()
     ax.set_xlabel('Time (minutes)')
     ax.set_ylabel('Energy (kJ)')
     ax2 = ax.twinx()
-    clim = pyplot.get(ax,'ylim')
-    ax2.set_ylim(clim[0]/3.6,clim[1]/3.6)
+    clim = pyplot.get(ax, 'ylim')
+    ax2.set_ylim(clim[0] / 3.6, clim[1] / 3.6)
     ax2.set_ylabel('Energy (Wh)')
     if pngfilename:
         pyplot.savefig(pngfilename + '-energy.png')
     # show the plot
     pyplot.show()
-    
+
     # open interactive shell
-    #ipshell()
+    # ipshell()
+
 
 if __name__ == '__main__':
     main()
