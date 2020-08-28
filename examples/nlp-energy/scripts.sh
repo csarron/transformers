@@ -1,6 +1,6 @@
 
 for m in bert-base distilbert mobilebert roberta-base; do
-source "data/${m}.env"
+source "data/env/${m}.env"
 CUDA_VISIBLE_DEVICES="0" python run_energy_squad.py \
         --model_type ${model_type} \
         --model_name_or_path ${model_name_or_path} \
@@ -14,7 +14,7 @@ CUDA_VISIBLE_DEVICES="0" python run_energy_squad.py \
 done
 
 for m in roberta-base bert-base distilbert mobilebert; do
-  source "data/${m}.env"
+  source "data/env/${m}.env"
   for b in 1 $(seq 2 2 32); do
     log_dir=data/${model}-squad-v1/dev1k/b-${b}
     mkdir -p "${log_dir}"
@@ -40,7 +40,7 @@ for m in roberta-base bert-base distilbert mobilebert; do
 done
 
 for m in roberta-base bert-base distilbert mobilebert; do
-  source "data/${m}.env"
+  source "data/env/${m}.env"
   echo '' > ${m}-eip.log
   for b in 1 $(seq 2 2 32); do
   python compute_efficiency_info.py data/${model}-squad-v1/dev1k/b-${b} >> ${m}-eip.log
@@ -48,7 +48,7 @@ for m in roberta-base bert-base distilbert mobilebert; do
 done 
 
 for m in roberta-base bert-base distilbert mobilebert; do
-  source "data/${m}.env"
+  source "data/env/${m}.env"
   echo '' > ${m}-wattsup.log
   for b in 1 $(seq 2 2 32); do
   python compute_wattsup_energy.py data/4-models-10-runs-dev1k.txt -d data/${model}-squad-v1/dev1k/b-${b} -p t -i 10 >> ${m}-wattsup.log
