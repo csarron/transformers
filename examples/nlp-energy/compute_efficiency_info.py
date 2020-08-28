@@ -27,10 +27,11 @@ def main(args):
     print(f"found {len(energy)} logs")
     avg = np.mean(list(energy.values()))
     std = np.std(list(energy.values()))
-    print(f"{log_parent_path} energy")
-    print(f"avg (kwh), std (kwh), avg (J), std (J), std ratio (%)")
-    print(f"{avg:.5f}, {std:.5f}, {avg * 3.6e6:.1f}, "
-          f"{std * 3.6e6:.1f}, {std * 100 / avg:.1f}")
+    print(f'{log_parent_path} energy avg (kwh): {avg:.5f}')
+    print(f'{log_parent_path} energy std (kwh): {std:.5f}')
+    print(f'{log_parent_path} energy avg (J): {avg * 3.6e6:.2f}')
+    print(f'{log_parent_path} energy std (J): {std * 3.6e6:.2f}')
+    print(f'{log_parent_path} energy std (%): {std * 100 / avg:.2f}')
     if args.num_examples:
         per_ex_avg = avg / args.num_examples
         per_ex_std = std / args.num_examples
