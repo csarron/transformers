@@ -3,6 +3,8 @@
 __author__ = "Qingqing Cao, https://awk.ai/, Twitter@sysnlp"
 
 import argparse
+from datetime import datetime
+
 import numpy as np
 
 from pathlib import Path
@@ -35,6 +37,8 @@ def main(args):
     for i, ((b, start), (_, end)) in enumerate(zip(start_times, end_times)):
         power_values = []
         start_record = False
+        start_time = datetime.strptime(start, '%Y-%m-%d-%H-%M-%S')
+        end_time = datetime.strptime(end, '%Y-%m-%d-%H-%M-%S')
         # print(f"iter{i + 1}", start, end)
         while True:
             try:
@@ -45,10 +49,11 @@ def main(args):
                     line = next(energy_gen)
                 items = line.split()
                 timestamp = items[0]
+                log_time = datetime.strptime(timestamp, '%Y-%m-%d-%H-%M-%S')
                 power = float(items[2])
-                if timestamp == start:
+                if log_time >= start_time:
                     start_record = True
-                if timestamp == end:
+                if log_time >= end_time:
                     last_line = line
                     # print(start, end, power_values)
                     # print()
@@ -60,21 +65,22 @@ def main(args):
                 break
         energy.append(sum(power_values) / 3.6e6)
         latency.append(len(power_values))
-        print(f'{prefix}={b}, {sum(power_values)}, {len(power_values)}')
+        print(f'{prefix}={b}, {sum(power_values):.2f}, '
+              f'{len(power_values)}, {start}, {end}')
         # energy_list.append(power_values)
     print(f"found {len(energy)} logs")
     avg = np.mean(energy)
     std = np.std(energy)
-    print(f"{log_path} energy")
-    print(f"avg (kwh), std (kwh), avg (J), std (J), std ratio (%)")
-    print(f"{avg:.5f}, {std:.5f}, {avg * 3.6e6:.1f}, "
-          f"{std * 3.6e6:.1f}, {std * 100 / avg:.1f}")
-    print(f"{log_path} latency")
+    print(f'{log_path} energy avg (kwh): {avg:.5f}')
+    print(f'{log_path} energy std (kwh): {std:.5f}')
+    print(f'{log_path} energy avg (J): {avg * 3.6e6:.2f}')
+    print(f'{log_path} energy std (J): {std * 3.6e6:.2f}')
+    print(f'{log_path} energy std (%): {std * 100 / avg:.2f}')
     latency_avg = np.mean(latency)
     latency_std = np.std(latency)
-    print(f"avg (s), std (s), std ratio (%)")
-    print(f"{latency_avg:.1f}, {latency_std:.1f}, {avg * 3.6e6:.1f},"
-          f"{latency_std * 100 / latency_avg:.1f}")
+    print(f"{log_path} latency avg (s): {latency_avg:.3f}")
+    print(f"{log_path} latency std (s): {latency_std:.3f}")
+    print(f"{log_path} latency std (%): {latency_std * 100 / latency_avg:.2f}")
     if args.num_examples:
         per_ex_avg = avg / args.num_examples * args.batch_size
         per_ex_std = std / args.num_examples * args.batch_size
